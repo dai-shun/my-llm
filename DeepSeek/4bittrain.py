@@ -2,10 +2,10 @@ from datasets import Dataset
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForCausalLM, DataCollatorForSeq2Seq, TrainingArguments, Trainer, GenerationConfig
 # 将JSON文件转换为CSV文件
-df = pd.read_json('../../data/huanhuan.json')
+df = pd.read_json('dataset/huanhuan.json')
 ds = Dataset.from_pandas(df)
 
-tokenizer = AutoTokenizer.from_pretrained('../../model/deepseek-ai/deepseek-llm-7b-chat/', use_fast=False, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained('/root/autodl-tmp/deepseek-ai/deepseek-llm-7b-chat/', use_fast=False, trust_remote_code=True)
 tokenizer.padding_side = 'right'
 tokenizer
 
@@ -37,7 +37,7 @@ tokenizer.decode(list(filter(lambda x: x != -100, tokenized_id[1]["labels"])))
 import torch
 
 model = AutoModelForCausalLM.from_pretrained(
-        '/root/model/deepseek-ai/deepseek-llm-7b-chat/', 
+        '/root/autodl-tmp/deepseek-ai/deepseek-llm-7b-chat/', 
         trust_remote_code=True, 
         torch_dtype=torch.half, 
         device_map="auto",
@@ -47,7 +47,7 @@ model = AutoModelForCausalLM.from_pretrained(
         bnb_4bit_quant_type="nf4", # 4位精度量化的类型。这里设置为"nf4"，表示使用nf4量化类型。
         bnb_4bit_use_double_quant=True  # 是否使用双精度量化。如果设置为True，则使用双精度量化。
     )
-model.generation_config = GenerationConfig.from_pretrained('/root/model/deepseek-ai/deepseek-llm-7b-chat/')
+model.generation_config = GenerationConfig.from_pretrained('/root/autodl-tmp/deepseek-ai/deepseek-llm-7b-chat/')
 model.generation_config.pad_token_id = model.generation_config.eos_token_id
 model
 
